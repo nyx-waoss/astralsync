@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="styles.css"></link>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="bgdot1" class="bgdot"></div>
+    <div id="bgdot2" class="bgdot"></div>
+
+    <div id="abaoutapp" class="dialog hide">
+        <h1>AstroSync</h1>
+        <span>v26.0</span>
+        <span>Creado por Nyx_waoss ✨</span>
+        <span>Creado con HTML, CSS, y JS</span>
+        <button class="btn secondary" onclick="closeAboutDialog()">Cerrar</button>
+    </div>
+
+    <section id="page_home">
+        <h1>Bienvenido a AstroSync</h1>
+        <h2>Calcula y obten la carta natal de cualquier persona</h2>
+
+        <div class="btn_wrapper">
+            <button class="btn" onclick="showForm()">Empezar!</button>
+            <button class="btn secondary" onclick="openAboutDialog()">Sobre AstroSync...</button>
+        </div>
+    </section>
+
+    <section id="page_form" class="right visible">
+        <h1>Ingrese los siguentes datos:</h1>
+        <div class="row"></div>
+        <form>
+            <label for="fname">Nombre de la persona  <c-opt>(Opcional)</c-opt> </label>
+            <input type="text" id="fname" name="fname">
+
+            <label for="fbirth">Fecha de nacimiento</label>
+            <input type="date" id="fbirth" name="fbirth">
+
+            <c-label-wrapper>
+                <label for="fbhour">Fecha de nacimiento</label>
+                <div class="row">
+                    <input type="checkbox" id="funknownfbhour" name="funknownfbhour">
+                    <label for="funknownfbhour">Hora desconocida</label>
+                </div>
+            </c-label-wrapper>
+            <input type="time" id="fbhour" name="fbhour">
+
+            <label>Pais de nacimiento</label>
+            <select id="dp_country">
+                <option>Cargando...</option>
+            </select>
+
+            <label>Ciudad de nacimiento</label>
+            <select id="dp_city" disabled>
+                <option>Seleccione un país...</option>
+            </select>
+
+            <div class="sep">
+                <div class="a"></div>
+                <span>Otros datos...</span>
+                <div class="b"></div>
+            </div>
+            <span class="subtitle">Llene estos datos opcionales para una mayor precision y mejorada experiencia.<br><br></span>
+            
+            <label>Color favorito</label>
+            <select id="dp_favcolor">
+                <option value="unknown">Desconocido</option>
+                <option value="red">Rojo</option>
+                <option value="green">Verde</option>
+                <option value="blue">Azul</option>
+                <option value="white">Blanco</option>
+
+                <option value="yellow">Amarillo</option>
+                <option value="orange">Naranja</option>
+                <option value="purple">Morado</option>
+                <option value="pink">Rosa</option>
+                <option value="magenta">Rosado / Magenta</option>
+                <option value="cyan">Celeste</option>
+                <option value="teal">Turquesa</option>
+                <option value="navy">Azul Marino</option>
+                <option value="lime">Verde Lima</option>
+
+                <option value="gray">Gris</option>
+                <option value="black">Negro</option>
+                <option value="brown">Marrón / Café</option>
+                <option value="beige">Beige</option>
+                <option value="maroon">Granate / Burdeos</option>
+
+                <option value="gold">Dorado</option>
+                <option value="silver">Plateado</option>
+
+                <option value="other">Otro...</option>
+            </select>
+
+            <label for="ffavnum">Numero favorito</label>
+            <input type="number" id="ffavnum" name="ffavnum">
+
+            <label for="fdefword">1 Palabra que defina a la persona</label>
+            <input type="text" id="fdefword" name="fdefword">
+
+            <label for="fperdef">Descripcion breve de la persona  <c-opt>(Opcional)</c-opt> </label>
+            <textarea id="fperdef"></textarea>
+
+            <div class="sep">
+                <div class="a"></div>
+                <span>Personalidad...</span>
+                <div class="b"></div>
+            </div>
+            <span class="subtitle">Mueva el slider para ajustar los parametros de personalidad.<br><br></span>
+            <div class="row">
+                <span>Introvertido</span>
+                <input type="range" min="-10" max="10" value="0" id="range_social">
+                <span>Extrovertido</span>
+            </div>
+            <div class="row">
+                <span>Tranquilo</span>
+                <input type="range" min="-10" max="10" value="0" id="range_chaos">
+                <span>Caótico</span>
+            </div>
+            <div class="row">
+                <span>Madrugador</span>
+                <input type="range" min="-10" max="10" value="0" id="range_sleep">
+                <span>Nocturno</span>
+            </div>
+        </form>
+        <div class="btn_wrapper">
+            <button class="btn secondary" onclick="hideForm()">Volver</button>
+            <button class="btn" onclick="generarCartaNatal()">Siguente</button>
+        </div>
+    </section>
+
+    <section id="page_load" class="right visible">
+        <h1>Calculando la carta natal...</h1>
+    </section>
+
+    <section id="page_positions" class="right visible">
+        <h1>Tus resultados estan listos!</h1>
+
+        <div class="pos-item">
+            <span class="pos-label">Ascendente</span>
+            <span id="pos-ascendente"></span>
+        </div>
+        <div class="pos-item">
+            <span class="pos-label">Medio Cielo</span>
+            <span id="pos-mc"></span>
+        </div>
+
+        <hr>
+
+        <div class="pos-item"><span class="pos-label">Sol</span><span id="pos-sun"></span></div>
+        <div class="pos-item"><span class="pos-label">Luna</span><span id="pos-moon"></span></div>
+        <div class="pos-item"><span class="pos-label">Mercurio</span><span id="pos-mercury"></span></div>
+        <div class="pos-item"><span class="pos-label">Venus</span><span id="pos-venus"></span></div>
+        <div class="pos-item"><span class="pos-label">Marte</span><span id="pos-mars"></span></div>
+        <div class="pos-item"><span class="pos-label">Júpiter</span><span id="pos-jupiter"></span></div>
+        <div class="pos-item"><span class="pos-label">Saturno</span><span id="pos-saturn"></span></div>
+        <div class="pos-item"><span class="pos-label">Urano</span><span id="pos-uranus"></span></div>
+        <div class="pos-item"><span class="pos-label">Neptuno</span><span id="pos-neptune"></span></div>
+        <div class="pos-item"><span class="pos-label">Plutón</span><span id="pos-pluto"></span></div>
+
+        <p id="pos-aviso" class="hide"></p>
+
+        <div class="btn_wrapper">
+            <button class="btn secondary">Inicio</button>
+            <button class="btn" onclick="generarInterpretacionIA()">Siguiente</button>
+        </div>
+    </section>
+
+    <section id="page_results" class="right visible">
+        <h1>Tus resultados estan listos!</h1>
+
+        <div id="resultado-posiciones"></div>
+        <div id="resultado-seccion1"></div>
+        <div id="resultado-seccion2"></div>
+        <div id="resultado-seccion3"></div>
+
+        <div class="btn_wrapper">
+            <button class="btn secondary">Inicio</button>
+            <button class="btn secondary">Guardar</button>
+        </div>
+    </section>
+    
+    <script src="app.js"></script>
+</body>
+</html>
