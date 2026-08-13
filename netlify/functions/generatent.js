@@ -11,11 +11,9 @@ export async function handler(event) {
     const { info, posiciones } = JSON.parse(event.body);
     const contexto = construirContextoPersonal(info);
 
-    const [seccion1, seccion2, seccion3] = await Promise.all([
-      llamarGroq(GROQ_KEY, MODEL, promptSeccion1(info, posiciones, contexto)),
-      llamarGroq(GROQ_KEY, MODEL, promptSeccion2(info, posiciones, contexto)),
-      llamarGroq(GROQ_KEY, MODEL, promptSeccion3(info, posiciones, contexto)),
-    ]);
+    const seccion1 = await llamarGroq(GROQ_KEY, MODEL, promptSeccion1(info, posiciones, contexto));
+    const seccion2 = await llamarGroq(GROQ_KEY, MODEL, promptSeccion2(info, posiciones, contexto));
+    const seccion3 = await llamarGroq(GROQ_KEY, MODEL, promptSeccion3(info, posiciones, contexto));
 
     return {
       statusCode: 200,
@@ -48,6 +46,14 @@ async function llamarGroq(apiKey, model, prompt) {
       temperature: 0.9,
     }),
   });
+
+  if (res.status === 429 && intento <= 3) {
+    const errBody = await res.json().catch(() => null);
+    const esperaSugerida = errBody?.error?.message?.match(/try again in ([\d.]+)s/)?.[1];
+    const esperaMs = (parseFloat(esperaSugerida) || 6) * 1000 + 500;
+    await new Promise(r => setTimeout(r, esperaMs));
+    return llamarGroq(apiKey, model, prompt, intento + 1);
+  }
 
   if (!res.ok) {
     const errBody = await res.text();
